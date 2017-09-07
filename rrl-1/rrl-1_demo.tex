@@ -1,0 +1,382 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% Start of Boilerplate %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{beamer}
+    \usetheme[progressbar=frametitle, subsectionpage=progressbar]{metropolis}
+    \usepackage[utf8]{inputenc}
+    
+    %%%%%%%%% cool metropolis options %%%%%%%%%
+    % numbering = none, center, fraction
+    % progressbar = none, head, frametitle, foot
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%% For notes %%%%%%%%%
+    \usepackage{pgfpages}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%% setup bibliography %%%%%%%%%
+    \usepackage{biblatex}
+    % \bibliographystyle{unsrt}
+    
+    %remove the icon
+    \setbeamertemplate{bibliography item}[text]
+    
+    %remove line breaks
+    \setbeamertemplate{bibliography entry title}{}
+    \setbeamertemplate{bibliography entry location}{}
+    \setbeamertemplate{bibliography entry note}{}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%% Colors %%%%%%%%%
+    % http://www.upenn.edu/about/styleguide-color-type
+    
+    \definecolor{blue}{HTML}{01256e}
+    \definecolor{darker_blue}{HTML}{00144d}
+    \definecolor{darkest_blue}{HTML}{000f3a}
+    \definecolor{lighter_blue}{HTML}{045ea7}
+    \definecolor{lightest_blue}{HTML}{82afd3}
+    
+    \definecolor{red}{HTML}{95001a}
+    \definecolor{darker_red}{HTML}{74000e}
+    \definecolor{darkest_red}{HTML}{57000a}
+    
+    \definecolor{white}{HTML}{ffffff}
+    
+    \definecolor{yellow}{HTML}{f2c100}
+    
+    \definecolor{dark_gray_2}{HTML}{44464b}
+    
+    \definecolor{darker_orange}{HTML}{ac3c00}
+    
+    \setbeamercolor{normal text}{fg=dark_gray_2, bg=black!2}
+    \setbeamercolor{alerted text}{fg=yellow}
+    \setbeamercolor{example text}{fg=lightest_blue}
+    \setbeamercolor{frametitle}{bg=darker_blue}
+    \setbeamercolor{progress bar}{fg=red, bg=lightest_blue}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%% Load basic packages %%%%%%%%%%%%%%%
+    % \usepackage{csquotes}
+    % \usepackage{soul}
+    \usepackage{mathtools}
+    % \usepackage{rotating}
+    \usepackage{datetime}
+    % \usepackage{caption}
+    % \usepackage{subcaption}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%% Arrays %%%%%%%%%%%%%%%%%%%
+    
+    \usepackage{array}
+    \usepackage{booktabs}
+    \usepackage{multirow}
+    \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+    \newcolumntype{K}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+    \newcolumntype{X}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+    \newcolumntype{E}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+    \newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%% Tikz %%%%%%%%%%%%%%%%%%%
+    \usepackage{tikz}
+    \usetikzlibrary{shapes.geometric, arrows, calc}
+    
+    %%%%%%%%%%%%%%%%%%%%% Positioning Grid (% of paper) %%%%%%%%%%%%%%%%%%%
+    \newcommand{\gridon}{
+    \setbeamertemplate{background}{\tikz[overlay, remember picture, help lines]{
+    \foreach \x in {0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1} \path (current page.south west) +(\x \paperwidth,0.03 \paperheight) node {\small$\x$};
+    \foreach \y in {0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1} \path (current page.south west) +(.975 \paperwidth,\y \paperheight) node {\small$\y$};
+    \foreach \x in {0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1} \draw (current page.south west) ++(\x \paperwidth,0.05 \paperheight) -- +(0 cm,9.6 cm);
+    \foreach \y in {0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1} \draw (current page.south west) ++(0,\y \paperheight) -- +(.95\paperwidth,0 cm);
+    }
+    }
+    }
+    
+    %%%%%%%%%%%%%%%%% Misc tikz styles %%%%%%%%%%%%%%%%%%%%%%
+    \tikzstyle{leadsto}=[line width=1mm,draw=blue,-triangle 45,postaction={draw, line width=3mm, shorten >=4mm, -}]
+    
+    %%%%%%%%%%%%%%%%%% Macros to embed Generic Stuff %%%%%%%%%%%%%%%%%%%
+    % anchor=north west, x, y, stuff to embed
+    \newcommand{\embedstuff}[4][north west]{
+    \begin{tikzpicture}[overlay,remember picture]
+        \node [anchor=#1, xshift=#2 \paperwidth, yshift=#3 \paperheight, inner sep=0pt] at (current page.south west) {#4};
+    \end{tikzpicture}
+    }
+    
+    %%%%%%%%%%%%%%%%%% Macros to embed images %%%%%%%%%%%%%%%%%%%
+    % anchor=north west, x, y, width, file
+    \newcommand{\embedpic}[5][north west]{
+    \embedstuff[#1]{#2}{#3}{\includegraphics[width=#4 \paperwidth]{#5}}
+    }
+    
+    %%%%%%%%%%%%%%%%%% Macros to embed text %%%%%%%%%%%%%%%%%%%
+    \newif\iftoBoxText
+    
+    \newcommand{\boxText}{
+    \toBoxTexttrue
+    }
+    
+    % anchor=north west, x, y, width, text
+    \newcommand{\embedtext}[5][north west]{
+    \iftoBoxText
+    \begin{tikzpicture}[overlay,remember picture]
+        \node [text width=#4\paperwidth, anchor=#1, xshift=#2 \paperwidth, yshift=#3 \paperheight, inner sep=0pt, draw] at (current page.south west) {#5};
+    \end{tikzpicture}
+    \else
+    \begin{tikzpicture}[overlay,remember picture]
+        \node [text width=#4\paperwidth, anchor=#1, xshift=#2 \paperwidth, yshift=#3 \paperheight, inner sep=0pt] at (current page.south west) {#5};
+    \end{tikzpicture}    
+    \fi
+    }
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%% Plotting stuff %%%%%%%%%%%%%%%%%%%
+    \usepackage{pgfplots}
+    \pgfplotsset{compat=1.14}
+    \pgfplotsset{every axis plot/.append style={line width=1pt}}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%% Videos %%%%%%%%%%%%%%%%%%%%%%%
+    \usepackage{media9}
+    
+    %%%%%%%%%%%%%% Macros to embed vids %%%%%%%%%%%%%%%%%
+    
+    \newif\iftoIncludeVids
+    
+    \newcommand{\includevids}{
+    \toIncludeVidstrue
+    }
+    
+    
+    % inputs: source, width, height
+    \newcommand{\embedvid}[3]{
+    \iftoIncludeVids
+    \includemedia[
+    width=#2,
+    height=#3,
+    keepaspectratio,
+    activate=pageopen,
+    passcontext,
+    addresource=#1,
+    flashvars={
+    source=#1
+    &loop=true
+    &autoPlay=true
+    &autoRewind=true
+    }
+    ]{}{VPlayer.swf}
+    \else
+    \includemedia[
+    draft,
+    width=#2,
+    height=#3,
+    keepaspectratio,
+    activate=pageopen,
+    passcontext,
+    addresource=#1,
+    flashvars={
+    source=#1
+    &loop=true
+    &autoPlay=true
+    &autoRewind=true
+    }
+    ]{}{VPlayer.swf}
+    \fi
+    }
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%%%
+    % always want to load ref stuff last in this order
+    \usepackage{hyperref}
+    \usepackage{cleveref}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%% End of Boilerplate %%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%      Edit Here:    %%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%% Document info %%%%%%%%%
+    \title{RRL-1 Beamer Format}
+    
+    \author{Michael Sobrepera}
+    \institute[University of Pennsylvania] 
+    {
+    Department of Mechanical Engineering\\
+    University of Pennsylvania
+    }
+    
+    % \date{some date}
+    
+    \subject{A Beamer format for use by the Rehab Robotics Lab}
+    
+    \addbibresource{bibliograpy.bib}
+    \graphicspath{ {./images/} }
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%% turn on positioning grid %%%%%%%%%
+    % \gridon
+    
+    %%%%%%%%% Include videos %%%%%%%%%
+    \includevids
+    
+    %%%%%%%%% Set Draft mode for figs %%%%%%%%%
+    % \setkeys{Gin}{draft}
+    
+    %%%%%%%% put boxes around text %%%%%%%%%
+    % \boxText
+    
+    %%%%%%%%% notes %%%%%%%%%
+    % \setbeameroption{show notes}
+    % \setbeameroption{show notes on second screen=right}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+\begin{document}
+
+\begin{frame}
+    \titlepage
+    \embedpic[center]{.7}{.375}{.2}{logos/RRL.pdf}
+    \embedpic[center]{.7}{.15}{.3}{logos/grasp.png}
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{A regular page}
+    \begin{itemize}
+        \item {
+        a bullet
+        }
+        \item A second bullet
+        \item a bullet with a citation \cite{Bonaccorsi2016}
+        \begin{itemize}
+            \item a sub bullet
+        \end{itemize}
+        \item More bullets after the sub bullet
+    \end{itemize}
+\end{frame}
+\note{Notes!!}
+
+
+\section{Second Section}
+\note{Section breaks can have notes}
+
+\begin{frame}{Another regular page}
+    \begin{itemize}
+        \item {
+        a bullet
+        }
+        \item A second bullet
+        \item a bullet with a citation \cite{Bonaccorsi2016}
+        \begin{itemize}
+            \item a sub bullet
+        \end{itemize}
+        \item More bullets after the sub bullet
+    \end{itemize}
+\end{frame}
+\note{Notes!!}
+
+\subsection{Our First Subsection}
+
+\begin{frame}{A regular page}
+    \begin{itemize}
+        \item {
+        a bullet
+        }
+        \item A second bullet
+        \item a bullet with a citation \cite{Bonaccorsi2016}
+        \begin{itemize}
+            \item a sub bullet
+        \end{itemize}
+        \item More bullets after the sub bullet
+    \end{itemize}
+\end{frame}
+\note{Notes!!}
+
+
+\subsubsection{This is a subsubsection}
+\begin{frame}{A regular page}
+    \begin{itemize}
+        \item {
+        a bullet
+        }
+        \item A second bullet
+        \item a bullet with a citation \cite{Bonaccorsi2016}
+        \begin{itemize}
+            \item a sub bullet
+        \end{itemize}
+        \item More bullets after the sub bullet
+    \end{itemize}
+\end{frame}
+\note{Notes!!}
+
+\subsubsection{Another sub section}
+\begin{frame}{A regular page}
+    \begin{itemize}
+        \item {
+        a bullet
+        }
+        \item A second bullet
+        \item a bullet with a citation \cite{Bonaccorsi2016}
+        \begin{itemize}
+            \item a sub bullet
+        \end{itemize}
+        \item More bullets after the sub bullet
+    \end{itemize}
+\end{frame}
+\note{Notes!!}
+
+\section{This is yet another section}
+\note{Section breaks can have notes}
+
+\begin{frame}{A regular page}
+    \begin{itemize}
+        \item {
+        a bullet
+        }
+        \item A second bullet
+        \item a bullet with a citation \cite{Bonaccorsi2016}
+        \begin{itemize}
+            \item a sub bullet
+        \end{itemize}
+        \item More bullets after the sub bullet
+    \end{itemize}
+\end{frame}
+\note{Notes!!}
+
+\subsection{A final subsection}
+
+\begin{frame}{A regular pages}
+    \begin{itemize}
+        \item {
+        a bullet
+        }
+        \item A second bullet
+        \item a bullet with a citation \cite{Bonaccorsi2016}
+        \begin{itemize}
+            \item a sub bullet
+        \end{itemize}
+        \item More bullets after the sub bullet
+    \end{itemize}
+\end{frame}
+\note{Notes!!}
+
+\begin{frame}[standout]
+    Thank you!
+\end{frame}
+
+% References don't seem to work quite right 
+\section{References}
+\begin{frame}[allowframebreaks]%in case more than 1 slide needed
+    % {\footnotesize \printbibliography}
+    \printbibliography
+\end{frame}
+
+\end{document}
